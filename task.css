@@ -1,0 +1,38 @@
+
+div#displayChapter {
+    border: 1px solid;
+    height: 50vh;
+}
+
+textarea#jsonInputTextarea ,textarea#jsonOutputTextarea {
+    width: 30vh;
+    height: 30vh;
+}
+
+div#loadContent {
+    height: 45vh;
+    position: relative;
+    width: 50vh;
+    border: 1px solid;
+    left: 89px;
+}
+
+.menuBar {
+    height: 8vh;
+    width: 50vh;
+    border: 1px solid;
+}
+
+.icons {
+    border: 1px solid;
+    height: 4vh;
+    font-size: 9pt;
+}
+
+.main-Container {
+    margin-top: 77px;
+}
+
+div#displayChapter {
+    text-align: center;
+}

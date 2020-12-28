@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+        <link rel="stylesheet" href="C:\Users\AM10395\Documents\task\task.css">
+    </head>
+    <body onload="loadChapters()">
+        <div class="container main-Container">
+            <div class="row">
+              <div class="col-sm-4"><textarea disabled id='jsonInputTextarea'></textarea></div>
+              <div class="col-sm-2">
+                  <div id="displayChapter">
+
+                  </div>
+              </div>
+              <div class="col-sm-6" id="previewContent">
+                    <div class="menuBar container">
+                        <div class="row">
+                            <div class="col-sm-3 icons" id="bold" onmousedown="event.preventDefault();" onclick="basicFn(event.target.id);">Bold</div> 
+                            <div class="col-sm-3 icons" id="italic" onmousedown="event.preventDefault();" onclick="basicFn(event.target.id);">Italic</div> 
+                            <div class="col-sm-3 icons" id="underline" onmousedown="event.preventDefault();" onclick="basicFn(event.target.id);">Underline</div> 
+                            <div class="col-sm-3 icons" id="strikethrough" onmousedown="event.preventDefault();" onclick="basicFn(event.target.id);">Strike</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 icons" id="fontsize" onmousedown="event.preventDefault();" onclick="document.execCommand('fontSize', false, '2');">Font size</div> 
+                            <div class="col-sm-3 icons" id="color" onmousedown="event.preventDefault();" onclick="document.execCommand('foreColor', false, '00FFFF');">Color</div> 
+                            <div class="col-sm-3 icons" id="addpara" onmousedown="event.preventDefault();" onclick="addPara();">Add Para</div> 
+                            <div class="col-sm-3 icons" id="removepara" onmousedown="event.preventDefault();" onclick="removePara();">Remove Para</div> 
+                        </div>
+                    </div>
+                    <div id="loadContent" contenteditable="true"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4"><textarea disabled id='jsonOutputTextarea'></textarea></div>
+            </div>
+          </div>
+
+          <script>
+              const jsonInput = `{"book":[
+{"sno":1, "chaptertitle":"Chapter 1", "paras":[{"type":"para","content":[{"type":"content","text":"This is test paragraph "},{"type":"content","text":"This is bold content", "format":{"bold":"true"}},{"type":"content","text":"This is italic content", "format":{"italic":"true"}},{"type":"content","text":"This is underline content", "format":{"underline":"true"}},{"type":"content","text":"This is strike content", "format":{"strike":"true"}},{"type":"content","text":"This is bolditalic content", "format":{"bold":"true","italic":"true","underline":"true"}}],"format":{"color":"orange", "fontsize":14, "afterspace":20 }}]},
+{"sno":2, "chaptertitle":"Chapter 2", "paras":[{"type":"para","content":[{"type":"content","text":"This is test paragraph "},{"type":"content","text":"This is bold content", "format":{"bold":"true"}},{"type":"content","text":"This is italic content", "format":{"italic":"true"}},{"type":"content","text":"This is underline content", "format":{"underline":"true"}},{"type":"content","text":"This is strike content", "format":{"strike":"true"}},{"type":"content","text":"This is bolditalic content", "format":{"bold":"true","italic":"true"}}],"format":{"color":"orange", "fontsize":14, "afterspace":20 }}]},
+{"sno":3, "chaptertitle":"Chapter 3", "paras":[{"type":"para","content":[{"type":"content","text":"This is test paragraph "},{"type":"content","text":"This is bold content", "format":{"bold":"true"}},{"type":"content","text":"This is italic content", "format":{"italic":"true"}},{"type":"content","text":"This is underline content", "format":{"underline":"true"}},{"type":"content","text":"This is strike content", "format":{"strike":"true"}},{"type":"content","text":"This is bolditalic content", "format":{"bold":"true","italic":"true"}}],"format":{"color":"orange", "fontsize":14, "afterspace":20 }}]},
+{"sno":4, "chaptertitle":"Chapter 4", "paras":[{"type":"para","content":[{"type":"content","text":"This is test paragraph "},{"type":"content","text":"This is bold content", "format":{"bold":"true"}},{"type":"content","text":"This is italic content", "format":{"italic":"true"}},{"type":"content","text":"This is underline content", "format":{"underline":"true"}},{"type":"content","text":"This is strike content", "format":{"strike":"true"}},{"type":"content","text":"This is bolditalic content", "format":{"bold":"true","italic":"true"}}],"format":{"color":"orange", "fontsize":14, "afterspace":20 }}]}
+]}`;
+
+            const  obj = JSON.parse(jsonInput);
+            var jsonIP = jsonInput;
+            document.getElementById('jsonInputTextarea').value = jsonIP;
+            document.getElementById('jsonOutputTextarea').value = jsonInput;  
+
+
+            function loadChapters(){
+
+                var chapterCount = obj.book.length;
+                var chapdisplay = document.getElementById('displayChapter');
+
+                for( var i = 0; i < chapterCount; i ++){
+
+                    let chapelement = document.createElement('div');
+                    var selectAttribute = document.createAttribute('onclick');
+                    selectAttribute.value = "selectChapter()";
+                    chapelement.setAttributeNode(selectAttribute);
+                    var chapCount = document.createAttribute('id');
+                    chapCount.value = i;
+                    chapelement.setAttributeNode(chapCount);
+                    chapelement.innerHTML = obj.book[i].chaptertitle;
+                    chapdisplay.append(chapelement);
+
+                }
+
+            }
+
+            function selectChapter() {
+                var currentElement = event.target.id;
+                var contentlength = obj.book[currentElement].paras[0].content.length;
+                var contentLoad = document.getElementById("loadContent");
+                contentLoad.setAttribute("active", currentElement);
+                contentLoad.innerHTML= '';
+
+                for( var j=0; j< contentlength; j ++ ){
+                    let createtagForContent = document.createElement('p');
+                    if ( obj.book[currentElement].paras[0].content[j].format ) {
+                        var formatCOunt = Object.keys(obj.book[currentElement].paras[0].content[j].format).length;
+                        for( var k=0; k< formatCOunt; k ++){
+
+                            var formatKeyText = Object.keys(obj.book[currentElement].paras[0].content[j].format)[k];
+                            var formatKey = obj.book[currentElement].paras[0].content[j].format[formatKeyText];
+                            if ( formatKeyText == 'bold' ) {
+                                if ( formatKey == 'true' ) {
+                                    if ( createtagForContent.innerHTML != "" ) {
+                                        var next = createtagForContent;
+                                            while ( next.firstChild ) {
+                                                next = next.firstChild; 
+                                            }
+                                        var createtagForFormat2 = document.createElement('b');
+                                        next.append(createtagForFormat2);
+                                    } else {
+                                    var createtagForFormat = document.createElement('b');
+                                    createtagForContent.append(createtagForFormat);
+                                    }
+                                }
+                            } else if ( formatKeyText == 'italic' ) {
+                                if ( formatKey == 'true' ) {
+                                    if ( createtagForContent.innerHTML != "" ) {
+                                        var next = createtagForContent;
+                                            while ( next.firstChild ) {
+                                                next = next.firstChild; 
+                                            }
+                                        var createtagForFormat2 = document.createElement('i');
+                                        next.append(createtagForFormat2);
+                                    } else {
+                                    var createtagForFormat = document.createElement('i');
+                                    createtagForContent.append(createtagForFormat);
+                                    }
+                                }
+                            } else if ( formatKeyText == 'underline' ) {
+                                if ( formatKey == 'true' ) {
+                                    if ( createtagForContent.innerHTML != "" ) {
+                                        var next = createtagForContent;
+                                            while ( next.firstChild ) {
+                                                next = next.firstChild; 
+                                            }
+                                        var createtagForFormat2 = document.createElement('u');
+                                        next.append(createtagForFormat2);
+                                    } else {
+                                    var createtagForFormat = document.createElement('u');
+                                    createtagForContent.append(createtagForFormat);
+                                    }
+                                }
+                            } else if ( formatKeyText == 'strike' ) {
+                                if ( formatKey == 'true' ) {
+                                    if ( createtagForContent.innerHTML != "" ) {
+                                        var next = createtagForContent;
+                                            while ( next.firstChild ) {
+                                                next = next.firstChild; 
+                                            }
+                                        var createtagForFormat2 = document.createElement('strike');
+                                        next.append(createtagForFormat2);
+                                    } else {
+                                    var createtagForFormat = document.createElement('strike');
+                                    createtagForContent.append(createtagForFormat);
+                                    }
+                                }
+                            } 
+                        }
+                        var contentText = obj.book[currentElement].paras[0].content[j].text;
+                        if (createtagForFormat2) {
+                            createtagForFormat2.innerHTML = contentText;
+                        } else {
+                            createtagForFormat.innerHTML = contentText;
+                        }
+                        contentLoad.append(createtagForContent);
+
+                    } else {
+                        var contentText = obj.book[currentElement].paras[0].content[j].text;
+                        createtagForContent.innerHTML = contentText;
+                        contentLoad.append(createtagForContent);
+                    }
+
+                    var paraFormatLength = Object.keys(obj.book[currentElement].paras[0].format).length;
+                    for (m = 0; m < paraFormatLength ; m++ ) {
+                        
+                        var paraFormatText = Object.keys(obj.book[currentElement].paras[0].format)[m];
+                        var paraFormatkey = obj.book[currentElement].paras[0].format[paraFormatText];
+                        if ( paraFormatText == 'color' ) {
+                            createtagForContent.style.color = paraFormatkey;
+                        } else if ( paraFormatText == 'fontsize' ) {
+                            createtagForContent.style.fontSize = paraFormatkey + "px;"
+                        } else if ( paraFormatText == 'afterspace' ) {
+                        }
+
+                    }
+
+                }
+
+            }
+
+            document.getElementById('loadContent').onkeyup = function ( event ) {
+                var currentContent = document.getElementById('loadContent').getAttribute('active');
+                for ( var n=0; n < obj.book[currentContent].paras[0].content.length; n++ ){
+                    obj.book[currentContent].paras[0].content[n].text = document.getElementById('loadContent').childNodes[n].innerText;
+                }
+                document.getElementById('jsonOutputTextarea').value = '';
+                var outputJSONString = JSON.stringify(obj);
+                document.getElementById('jsonOutputTextarea').value = outputJSONString;
+            }
+
+            function basicFn(id){
+                document.execCommand(id);
+                let arrayValue = [...document.getElementById('loadContent').childNodes];
+
+                arrayValue.forEach(function(item,index){
+                    
+                    var nextItem = item;
+                    while (nextItem.childElementCount > 0){
+                        var tagname = nextItem.firstElementChild.tagName;
+                        var activeBook = document.getElementById('loadContent').getAttribute('active');
+                        if (obj.book[activeBook].paras[0].content[index]["format"]){
+                            if( !obj.book[activeBook].paras[0].content[index]["format"].hasOwnProperty(id) ){
+                                if( tagname == 'B') {
+                                        obj.book[activeBook].paras[0].content[index]["format"].bold = "true";
+                                } else if ( tagname == 'I' ){
+                                        obj.book[activeBook].paras[0].content[index]["format"].italic = "true";
+                                } else if ( tagname == 'U' ){
+                                        obj.book[activeBook].paras[0].content[index]["format"].underline = "true";
+                                } else if ( tagname == 'STRIKE' ){
+                                        obj.book[activeBook].paras[0].content[index]["format"].strike = "true";
+                                }
+                            }
+                        } else {
+                            if( tagname == 'B') {
+                                obj.book[activeBook].paras[0].content[index].format = {bold : "true"};
+                            } else if ( tagname == 'I' ){
+                                obj.book[activeBook].paras[0].content[index].format = {italic : "true"};
+                            } else if ( tagname == 'U' ){
+                                obj.book[activeBook].paras[0].content[index].format = {underline : "true"};
+                            } else if ( tagname == 'STRIKE' ){
+                                obj.book[activeBook].paras[0].content[index].format = {strike : "true"};
+                            }
+                        }
+                        nextItem = nextItem.firstElementChild;
+
+                    }
+
+                });
+                var outputJSONString = JSON.stringify(obj);
+                document.getElementById('jsonOutputTextarea').value = outputJSONString;
+            }
+
+            function addPara(){
+                var newpara = document.createElement("p");
+                var breakelement = document.createElement("br");
+                newpara.append(breakelement);
+                var parent = window.getSelection().anchorNode.parentElement;
+                while(parent.tagName != 'P' ){
+                    parent = parent.parentElement;
+                }   
+                parent.insertAdjacentElement("afterend",newpara);
+            }
+
+            function removePara(){
+                var parent = window.getSelection().anchorNode.parentElement;
+                while(parent.tagName != 'P' ){
+                    parent = parent.parentElement;
+                }   
+                parent.remove();
+            }
+            
+          </script>
+    </body>
+</html>
