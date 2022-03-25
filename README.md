@@ -2,12 +2,13 @@
 
 ## Overview
 
-A simple editor part built with [Javascript](https://www.javascript.com/).
+A simple html editor built with [Javascript](https://www.javascript.com/).
 
 ## Functionalities
 
-- Taking JSON as input, the content are displayed in the editor 
-- When changes are made, the output which is in JSON will also be updated.
+- A simple HTML editor that renders content using JSON.
+- When changes are made, the file will be saved as JSON.
+
 ## Built With
 
 - Javascript
